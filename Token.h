@@ -11,11 +11,10 @@ enum TOKEN_TYPE {ADD, SUB, MUL, DIV, LEFT_PAREN, RIGHT_PAREN, NUM};
 
 class Token {
 public:
-    Token(TOKEN_TYPE token_type, int value_ = 0);
+    Token(TOKEN_TYPE token_type, double value_ = 0);
 
-private:
     TOKEN_TYPE type;
-    int value;      //NUM(数字)类型才有value值
+    double value;      //NUM(数字)类型才有value值
 };
 
 

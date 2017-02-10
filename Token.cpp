@@ -4,7 +4,7 @@
 
 #include "Token.h"
 
-Token::Token(TOKEN_TYPE token_type, int value_) {
+Token::Token(TOKEN_TYPE token_type, double value_) {
     type = token_type;
     value = value_;
 }

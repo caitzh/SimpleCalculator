@@ -15,10 +15,14 @@ public:
     LexicalAnalyser(string input);
     string analyse();
     string analyse(string input);
-    bool regonizeOperator();
-    bool regonizeNumber();
+    const vector<Token>& getResult();
 
 private:
+    bool regonizeOperator();
+    bool regonizeNumber();
+    bool regonizeWhiteSpace();
+    double stringToNum(string s);
+
     int index; // 指向下一个需要分析的字符
     string expression; // 需要分析的数学表达式
     vector<Token> result; // 词法分析结果, Token 序列
