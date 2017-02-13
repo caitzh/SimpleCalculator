@@ -4,9 +4,10 @@
 
 #include <iostream>
 #include "SyntaxAnalyser.h"
+#include "CalculatorException.h"
 
 const string SyntaxAnalyser::grammarTable[9] = {
-        "",
+        "S->E",
         "E->E+T",
         "E->E-T",
         "E->T",
@@ -56,7 +57,7 @@ void SyntaxAnalyser::initMapTable() {
     }
 }
 
-Action SyntaxAnalyser::stringToAction(string actionString) {
+Action SyntaxAnalyser::stringToAction(const string actionString) {
     ACTION_TYPE actionType;
     char c = actionString[0];
     if (c == 'a')
@@ -79,7 +80,7 @@ SyntaxAnalyser::SyntaxAnalyser() {
 }
 
 
-bool SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
+double SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
     stack<int> stateStack;
     stack<Symbol> symbolStack;
     int tokenIndex = 0;
@@ -112,17 +113,16 @@ bool SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
                     stateStack.push(gotoAction.num);
                 }
             } else {
-                cout << symbolStack.top().value << endl;
-                return true;
+                return symbolStack.top().value;
             }
         } else {
-            return false;
+            throw CalculatorException("SyntaxError found");
         }
     }
-    return false;
+    throw CalculatorException("SyntaxError found");
 }
 
-double SyntaxAnalyser::calculateValue(double *value, int numOfProduction) {
+double SyntaxAnalyser::calculateValue(const double *value, const int numOfProduction) {
     double newValue = 0;
     switch (numOfProduction) {
         case 1:
@@ -135,6 +135,8 @@ double SyntaxAnalyser::calculateValue(double *value, int numOfProduction) {
             newValue = value[2] * value[0];
             break;
         case 5:
+            if (value[0] == 0)
+                throw CalculatorException("MathError: dividor can not be 0");
             newValue = value[2] / value[0];
             break;
         case 3:

@@ -26,12 +26,12 @@ struct Action {
 class SyntaxAnalyser {
 public:
     SyntaxAnalyser();
-    bool analyse(const vector<Token> &tokenList);
+    double analyse(const vector<Token> &tokenList);
 
 private:
     void initMapTable();
-    Action stringToAction(string actionString);
-    double calculateValue(double value[], int numOfProduction);
+    Action stringToAction(const string actionString);
+    double calculateValue(const double value[], const int numOfProduction);
 
     map<Symbol, Action> gotoTable[16];
     map<TOKEN_TYPE, Action> actionTable[16];

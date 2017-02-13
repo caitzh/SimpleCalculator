@@ -4,19 +4,21 @@
 
 #include <iostream>
 #include "LexicalAnalyser.h"
+#include "CalculatorException.h"
 
-LexicalAnalyser::LexicalAnalyser(string input) {
+LexicalAnalyser::LexicalAnalyser(const string input) {
     expression = input;
     index = 0;
 }
 
-string LexicalAnalyser::analyse(string input) {
+const vector<Token>& LexicalAnalyser::analyse(const string input) {
     expression = input;
     index = 0;
+    result.clear();
     return analyse();
 }
 
-string LexicalAnalyser::analyse() {
+const vector<Token>& LexicalAnalyser::analyse() {
     while (index < expression.size()) {
         if (!regonizeOperator() && !regonizeNumber() && !regonizeWhiteSpace()) {
             string error(expression);
@@ -25,14 +27,14 @@ string LexicalAnalyser::analyse() {
                 error += " ";
             }
             error += "^\n";
-            error += "Error: can not regonize '";
+            error += "LexicalError: can not regonize '";
             error += expression[index];
             error += "'";
-            return error;
+            throw CalculatorException(error);
         }
     }
     result.push_back(Token(END)); //加入结束标志,即'$'
-    return "";
+    return result;
 }
 
 bool LexicalAnalyser::regonizeOperator() {
@@ -119,7 +121,7 @@ bool LexicalAnalyser::regonizeNumber() {
     }
 }
 
-double LexicalAnalyser::stringToNum(string s) {
+double LexicalAnalyser::stringToNum(const string s) {
     int integer = 0, i;
     for (i = 0; i < s.size() && s[i] != '.'; ++i) {
         integer = integer * 10 + s[i] - '0';

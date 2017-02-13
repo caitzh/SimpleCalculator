@@ -12,16 +12,16 @@ using namespace std;
 
 class LexicalAnalyser {
 public:
-    LexicalAnalyser(string input);
-    string analyse();
-    string analyse(string input);
+    LexicalAnalyser(const string input = "");
+    const vector<Token>& analyse();
+    const vector<Token>& analyse(const string input);
     const vector<Token>& getResult();
 
 private:
     bool regonizeOperator();
     bool regonizeNumber();
     bool regonizeWhiteSpace();
-    double stringToNum(string s);
+    double stringToNum(const string s);
 
     int index; // 指向下一个需要分析的字符
     string expression; // 需要分析的数学表达式
