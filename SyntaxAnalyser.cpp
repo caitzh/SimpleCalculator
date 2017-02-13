@@ -2,6 +2,7 @@
 // Created by caitzh on 17-2-11.
 //
 
+#include <iostream>
 #include "SyntaxAnalyser.h"
 
 const string SyntaxAnalyser::grammarTable[9] = {
@@ -96,11 +97,14 @@ bool SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
                 tokenIndex++;
             } else if (action.actionType == REDUCE) {
                 int popNum = grammarTable[action.num].size() - 3;
+                double value[3] = {0};
                 for (int i = 0; i < popNum; ++i) {
                     stateStack.pop();
+                    value[i] = symbolStack.top().value;
                     symbolStack.pop();
                 }
-                Symbol symbol(N_TERMINAL, 0, grammarTable[action.num][0]);
+                double newValue = calculateValue(value, action.num);
+                Symbol symbol(N_TERMINAL, newValue, grammarTable[action.num][0]);
                 symbolStack.push(symbol);
                 auto iter = gotoTable[stateStack.top()].find(symbol);
                 if (iter != gotoTable[stateStack.top()].end()) {
@@ -108,6 +112,7 @@ bool SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
                     stateStack.push(gotoAction.num);
                 }
             } else {
+                cout << symbolStack.top().value << endl;
                 return true;
             }
         } else {
@@ -115,4 +120,33 @@ bool SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
         }
     }
     return false;
+}
+
+double SyntaxAnalyser::calculateValue(double *value, int numOfProduction) {
+    double newValue = 0;
+    switch (numOfProduction) {
+        case 1:
+            newValue = value[2] + value[0];
+            break;
+        case 2:
+            newValue = value[2] - value[0];
+            break;
+        case 4:
+            newValue = value[2] * value[0];
+            break;
+        case 5:
+            newValue = value[2] / value[0];
+            break;
+        case 3:
+        case 6:
+        case 8:
+            newValue = value[0];
+            break;
+        case 7:
+            newValue = value[1];
+            break;
+        default:
+            break;
+    }
+    return newValue;
 }

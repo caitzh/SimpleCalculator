@@ -27,10 +27,12 @@ class SyntaxAnalyser {
 public:
     SyntaxAnalyser();
     bool analyse(const vector<Token> &tokenList);
+
 private:
     void initMapTable();
     Action stringToAction(string actionString);
-    //vector<Production> grammar;
+    double calculateValue(double value[], int numOfProduction);
+
     map<Symbol, Action> gotoTable[16];
     map<TOKEN_TYPE, Action> actionTable[16];
     static const string table[16][11];

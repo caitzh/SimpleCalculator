@@ -11,6 +11,5 @@ Symbol::Symbol(Token token) : Token(token), id(' ') {}
 
 bool operator<(const Symbol a, const Symbol b) {
     if (a.type != b.type) return a.type < b.type;
-    else if (a.value != b.value) return a.value < b.value;
     else return a.id < b.id;
 }
