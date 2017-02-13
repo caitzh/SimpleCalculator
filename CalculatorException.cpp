@@ -7,6 +7,6 @@
 CalculatorException::CalculatorException(string message)
         : exception(), message(message) {}
 
-string CalculatorException::what() {
+const string CalculatorException::what() {
     return message;
 }

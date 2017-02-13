@@ -10,10 +10,10 @@
 
 class Calculator {
 public:
-    double calculate(string expression);
+    double calculate(string expression); // 计算表达式的值
 private:
-    LexicalAnalyser lexicalAnalyser;
-    SyntaxAnalyser syntaxAnalyser;
+    LexicalAnalyser lexicalAnalyser; // 词法分析器
+    SyntaxAnalyser syntaxAnalyser; // 语法分析器
 };
 
 

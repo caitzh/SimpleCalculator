@@ -18,6 +18,7 @@ const string SyntaxAnalyser::grammarTable[9] = {
         "F->n"
 };
 
+// 前8列是 action 表, 后3列是 goto 表
 const string SyntaxAnalyser::table[16][11] = {
         {"", "", "", "", "s9", "", "s14", "", "g1", "g2", "g13"},
         {"s3", "s4", "", "", "", "", "", "acc"},
@@ -45,8 +46,10 @@ void SyntaxAnalyser::initMapTable() {
             string actionString = table[i][j];
             if (!actionString.empty()) {
                 Action action = stringToAction(actionString);
+                // 插入 Action 表
                 if (j < 8)
                     actionTable[i].insert(make_pair(types[j], action));
+                // 插入 Goto 表
                 else {
                     Symbol symbol(N_TERMINAL, 0, no_terminal[j-8]);
                     gotoTable[i].insert(make_pair(symbol, action));
@@ -81,21 +84,23 @@ SyntaxAnalyser::SyntaxAnalyser() {
 
 
 double SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
-    stack<int> stateStack;
-    stack<Symbol> symbolStack;
-    int tokenIndex = 0;
+    stack<int> stateStack; // 状态栈
+    stack<Symbol> symbolStack; // 符号栈
+    int tokenIndex = 0; // 下一个Token
 
-    stateStack.push(0);
+    stateStack.push(0); // 压入初始状态 0
     while (tokenIndex < tokenList.size()) {
         int state = stateStack.top();
         Token token = tokenList[tokenIndex];
         auto it = actionTable[state].find(token.type);
         if (it != actionTable[state].end()) {
             Action action = it->second;
+            // 进行移进
             if (action.actionType == SHIFT) {
                 symbolStack.push(Symbol(token));
                 stateStack.push(action.num);
                 tokenIndex++;
+            // 进行归约
             } else if (action.actionType == REDUCE) {
                 int popNum = grammarTable[action.num].size() - 3;
                 double value[3] = {0};
@@ -104,48 +109,55 @@ double SyntaxAnalyser::analyse(const vector<Token> &tokenList) {
                     value[i] = symbolStack.top().value;
                     symbolStack.pop();
                 }
+                // 归约时计算值
                 double newValue = calculateValue(value, action.num);
                 Symbol symbol(N_TERMINAL, newValue, grammarTable[action.num][0]);
                 symbolStack.push(symbol);
                 auto iter = gotoTable[stateStack.top()].find(symbol);
+                // goto
                 if (iter != gotoTable[stateStack.top()].end()) {
                     Action gotoAction = iter->second;
                     stateStack.push(gotoAction.num);
                 }
-            } else {
+            } else if (action.actionType == ACCEPT){
+                // 识别成功，返回结果的值
                 return symbolStack.top().value;
             }
         } else {
+            // 出错，抛出语法错误异常
             throw CalculatorException("SyntaxError found");
         }
     }
+    // 出错，抛出语法错误异常
     throw CalculatorException("SyntaxError found");
 }
 
+// numOfProduction 表示归约的产生式编号
 double SyntaxAnalyser::calculateValue(const double *value, const int numOfProduction) {
     double newValue = 0;
     switch (numOfProduction) {
         case 1:
-            newValue = value[2] + value[0];
+            newValue = value[2] + value[0]; // E->E+T
             break;
         case 2:
-            newValue = value[2] - value[0];
+            newValue = value[2] - value[0]; // E->E-T
             break;
         case 4:
-            newValue = value[2] * value[0];
+            newValue = value[2] * value[0]; // E->E*T
             break;
         case 5:
+            // 除数不能为0
             if (value[0] == 0)
                 throw CalculatorException("MathError: dividor can not be 0");
-            newValue = value[2] / value[0];
+            newValue = value[2] / value[0]; // E->E/T
             break;
-        case 3:
-        case 6:
-        case 8:
+        case 3: // E->T
+        case 6: // T->F
+        case 8: // F->n
             newValue = value[0];
             break;
         case 7:
-            newValue = value[1];
+            newValue = value[1]; // F->(E)
             break;
         default:
             break;

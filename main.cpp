@@ -13,6 +13,7 @@ int main() {
         try {
             cout << calculator.calculate(s) << endl;
             cout << "Please input a math expression[input q to quit]: " << endl;
+        // 异常处理
         } catch (CalculatorException e) {
             cout << e.what() << endl;
             cout << "Please check and input again[input q to quit]: " << endl;

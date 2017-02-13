@@ -10,12 +10,13 @@
 using std::string;
 using std::exception;
 
+// 自定义异常类，表示计算表达式时发生的各种异常
 class CalculatorException : public exception {
 public:
     CalculatorException(string message);
-    string what();
+    const string what();
 private:
-    string message;
+    string message; // 异常信息
 };
 
 

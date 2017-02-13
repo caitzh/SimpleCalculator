@@ -14,7 +14,7 @@ LexicalAnalyser::LexicalAnalyser(const string input) {
 const vector<Token>& LexicalAnalyser::analyse(const string input) {
     expression = input;
     index = 0;
-    result.clear();
+    result.clear(); // 清除上次计算结果
     return analyse();
 }
 
@@ -60,8 +60,9 @@ bool LexicalAnalyser::regonizeOperator() {
                 type = RIGHT_PAREN;
                 break;
             default:
-                return false;
+                return false; // 识别运算符失败
         }
+        // 识别成功，加入 result
         Token token(type);
         result.push_back(token);
         index++;
@@ -110,23 +111,26 @@ bool LexicalAnalyser::regonizeNumber() {
         if (!flag) break;
         index++;
     }
+    // 识别成功
     if (state == 1 || state == 3) {
         double value = stringToNum(expression.substr(oldIndex, index-oldIndex));
         Token token(NUM, value);
         result.push_back(token);
         return true;
     } else {
-        //index = oldIndex;
+        // 识别失败
         return false;
     }
 }
 
 double LexicalAnalyser::stringToNum(const string s) {
     int integer = 0, i;
+    // 转换整数部分
     for (i = 0; i < s.size() && s[i] != '.'; ++i) {
         integer = integer * 10 + s[i] - '0';
     }
     double float_num = 0, pow = 0.1;
+    // 转换小数部分
     if (s[i] == '.') {
         for (int j = i+1; j < s.size(); ++j) {
             float_num += (s[j] - '0') * pow;
