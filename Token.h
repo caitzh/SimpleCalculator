@@ -6,8 +6,8 @@
 #define SIMPLECALCULATOR_TOKEN_H
 
 
-//词法单元类型，加减乘除、左括号、右括号、数字
-enum TOKEN_TYPE {ADD, SUB, MUL, DIV, LEFT_PAREN, RIGHT_PAREN, NUM};
+//词法单元类型，加减乘除、左括号、右括号、数字、非终结符(用于语法分析)、结束标志
+enum TOKEN_TYPE {ADD, SUB, MUL, DIV, LEFT_PAREN, RIGHT_PAREN, NUM, N_TERMINAL, END};
 
 class Token {
 public:

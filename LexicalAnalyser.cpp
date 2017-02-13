@@ -31,6 +31,7 @@ string LexicalAnalyser::analyse() {
             return error;
         }
     }
+    result.push_back(Token(END)); //加入结束标志,即'$'
     return "";
 }
 
